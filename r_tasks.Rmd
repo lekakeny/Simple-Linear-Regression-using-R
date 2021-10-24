@@ -1,0 +1,100 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+Q2. 
+
+Analysis of Canadian Manufacturing Workers Work-Hours: The time series plot below describes the average annual number of weekly hours spent by Canadian manufacturing workers. The data is available in CanadianWorkHours.xls.
+
+(a) Reproduce the time plot
+
+```{r}
+# identify the current location of the r-file and set it as the working directory
+  
+setwd(getwd())
+
+
+# Loading
+library("readxl")
+
+library(ggplot2)
+
+
+
+# Read data into R
+work_hours = read_excel("CanadianWorkHours.xls", sheet = "Sheet1")
+
+
+# print(work_hours)
+
+ggplot(work_hours, aes(x=work_hours$`Year`, y=work_hours$`Hours per week`))+
+  ylim(34, 38) +
+  geom_line( color="#69b3a2", size=1, alpha=0.9, linetype=1) +
+  ggtitle("Canadian Manufacturing Work Hours") +
+  xlab("Year") +
+  ylab("Hours per week") + 
+  ylim(breaks = c(34.5, 35,36,37,38))
+  
+
+```
+Q3. a
+
+```{r}
+setwd(getwd())
+
+# Read the data
+caschool = read.csv(file = 'caschool.csv')
+# print(caschool)
+print("Summary Statistics for students’ test score" )
+summary(caschool$testscr)
+
+print("Summary Statistics for the student-teacher ratio")
+summary(caschool$str)
+
+```
+Q3.b) Run a regression of testscr on str. List the regression results. Use a sentence to interpret the regression coefficient of str.
+
+Interpretation: 
+
+The regression line can be written as testscr = 698.93 - 2.28 str. 
+
+The regression coefficient for str is -2.25. It means that for every extra if the students to teachers ration increases by 1 then the test score reduces by -2.28 units.
+
+```{r}
+print("This is the correlation coefficients:") 
+
+cor(caschool$testscr, caschool$str)
+
+print("This is where we calculate the linear regression model")
+model <- lm(testscr ~ str, data = caschool)
+
+print("This is the coefficient and the intercept of the Linear Regression Model")
+model
+```
+Q3.(c) Use a sentence to interpret the R-squared
+
+Interpretation: The model has an udjusted R-squared of 0.0898. The implication is that 4% of the change in students scores can be explained by a change in the students to teachers ratio.
+
+```{r}
+print("This is the summary of the linear regression model. This is where we find the R-squared")
+summary(model)
+```
+Q3. (d) Draw a graph of testscr versus str. Add a regression fitted line on the graph.
+
+
+```{r}
+ggplot(caschool, aes(x = str, y = testscr)) +
+  geom_point() +
+  stat_smooth(method = lm, se = FALSE)
+
+
+```
+Q3 (e) Draw a graph of regression residuals versus str. Add a horizontal line on the graph.
+
+```{r}
+str_residuals = resid(model)
+
+plot(caschool$str, str_residuals, ylab = "Rediduals", xlab = 'student-teacher ratio', main = "Residuals due to Students Teacher Ratio")+
+  abline(0,0)
+```
+
